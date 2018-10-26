@@ -1,0 +1,7 @@
+trackpoint
+trackpoint-*.yml
+pkg
+src
+*.pkg.tar.xz
+*.src.tar.xz
+trackpoint-git
