@@ -20,7 +20,7 @@ func ParseFlags(args []string, settings *Settings) (err error) {
 
 	fs.StringVar(&config, "config", "", "The path to the config file")
 	fs.StringVar(&config, "c", "", "The path to the config file (shorthand)")
-	fs.StringVar(&interval, "interval", "5s", "The interval at which the daemon executes.")
+	fs.StringVar(&interval, "interval", "30s", "The interval at which the daemon executes.")
 	fs.StringVar(&settings.SysfsPath, "sysfs", settings.SysfsPath, "The path to the SYSFS device.")
 
 	fs.Uint("draghys", DefaultDragHysteresis, "Drag Hysteresis (how hard it is to drag with Z-axis pressed).")
