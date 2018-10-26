@@ -2,7 +2,7 @@
 // Any changes will be lost if this file is regenerated.
 // see https://github.com/cheekybits/genny
 
-package trackpoint
+package main
 
 import "time"
 
@@ -12,8 +12,8 @@ func DebounceBool(interval time.Duration, input chan bool) chan bool {
 
 	go func() {
 		execute := false
+		var i bool
 		for {
-			var i bool
 			select {
 			case i, more := <-input:
 				execute = true

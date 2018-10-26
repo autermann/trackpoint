@@ -1,4 +1,4 @@
-package trackpoint
+package main
 
 import (
 	"errors"

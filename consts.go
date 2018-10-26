@@ -1,4 +1,4 @@
-package trackpoint
+package main
 
 // The default trackpoint configuration values
 const (

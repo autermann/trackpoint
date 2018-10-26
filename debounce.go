@@ -1,4 +1,4 @@
-package trackpoint
+package main
 
 import "time"
 import "github.com/cheekybits/genny/generic"
