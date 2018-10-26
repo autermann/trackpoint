@@ -4,6 +4,7 @@ import (
 	"log"
 	"os"
 	"os/signal"
+	"path/filepath"
 	"sync"
 	"syscall"
 	"time"
@@ -59,11 +60,9 @@ func NewSettingsDaemon(settings *Settings) (d *SettingsDaemon) {
 }
 
 func (d *SettingsDaemon) watchSettings(stop <-chan bool) (changed chan bool, errors chan error) {
-	changed = make(chan bool, 1)
-	errors = make(chan error, 1)
-
+	changed = make(chan bool)
+	errors = make(chan error)
 	watcher, err := fsnotify.NewWatcher()
-	log.Print("Created watcher")
 	if err != nil {
 		errors <- err
 		close(changed)
@@ -85,8 +84,7 @@ func (d *SettingsDaemon) watchSettings(stop <-chan bool) (changed chan bool, err
 		close(errors)
 	}
 
-	err = watcher.Add(d.Settings.Path)
-	if err != nil {
+	if err = watcher.Add(filepath.Dir(d.Settings.Path)); err != nil {
 		closeWatcher(err)
 		return
 	}
@@ -95,24 +93,14 @@ func (d *SettingsDaemon) watchSettings(stop <-chan bool) (changed chan bool, err
 		for {
 			select {
 			case <-stop:
-				log.Println("watcher received stop")
 				closeWatcher(nil)
 				return
 			case err = <-watcher.Errors:
-				log.Println("error watching file", err)
 				closeWatcher(err)
 				return
 			case event := <-watcher.Events:
-				switch op := event.Op; op {
-				case fsnotify.Create, fsnotify.Rename, fsnotify.Write:
-					if path := event.Name; path == d.Settings.Path {
-						err = d.onSettingsChange()
-						if err != nil {
-							closeWatcher(err)
-							return
-						}
-						changed <- true
-					}
+				if event.Name == d.Settings.Path {
+					changed <- true
 				}
 			}
 		}
@@ -140,11 +128,12 @@ func (d *SettingsDaemon) DoStuff(stop <-chan bool) (err error) {
 		err = nil
 	}
 
+	log.Printf("Scheduling daemon at %v", d.Settings.Interval)
+
 	if d.Settings.Path == "" {
 		for {
 			select {
 			case <-stop:
-				log.Printf("received stop")
 				return
 			case <-time.After(d.Settings.Interval):
 				d.applySettingsNoError()
@@ -159,13 +148,16 @@ func (d *SettingsDaemon) DoStuff(stop <-chan bool) (err error) {
 		for {
 			select {
 			case <-stop:
-				log.Printf("received stop")
 				stop2 <- true
 				err = nil
 				return
 			case err = <-errors:
 				return
 			case <-changed:
+				err = d.onSettingsChange()
+				if err != nil {
+					return
+				}
 				d.applySettingsNoError()
 			case <-time.After(d.Settings.Interval):
 				d.applySettingsNoError()

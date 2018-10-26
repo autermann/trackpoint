@@ -1,7 +1,10 @@
 package main
 
-import "time"
-import "github.com/cheekybits/genny/generic"
+import (
+	"time"
+
+	"github.com/cheekybits/genny/generic"
+)
 
 //go:generate genny -in=$GOFILE -out=gen-$GOFILE gen "DebounceType=bool"
 
@@ -10,24 +13,30 @@ type DebounceType generic.Type
 
 // DebounceDebounceType debounces the input chan.
 func DebounceDebounceType(interval time.Duration, input chan DebounceType) chan DebounceType {
-	output := make(chan DebounceType, 1)
+	output := make(chan DebounceType)
 
 	go func() {
-		execute := false
 		var i DebounceType
+		var ok bool
+
 		for {
-			select {
-			case i, more := <-input:
-				execute = true
-				if !more {
+			i, ok = <-input
+
+			if !ok {
+				close(output)
+				return
+			}
+		F:
+			for {
+				select {
+				case i, ok = <-input:
+					if !ok {
+						close(output)
+						return
+					}
+				case <-time.After(interval):
 					output <- i
-					close(output)
-					return
-				}
-			case <-time.After(interval):
-				if execute {
-					output <- i
-					execute = false
+					break F
 				}
 			}
 		}

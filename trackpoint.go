@@ -44,6 +44,7 @@ func ParseFlags(args []string, settings *Settings) (err error) {
 	fs.Parse(args[1:])
 
 	settings.Interval, err = time.ParseDuration(interval)
+
 	if err != nil {
 		return err
 	}

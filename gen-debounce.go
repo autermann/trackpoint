@@ -8,24 +8,30 @@ import "time"
 
 // DebounceBool debounces the input chan.
 func DebounceBool(interval time.Duration, input chan bool) chan bool {
-	output := make(chan bool, 1)
+	output := make(chan bool)
 
 	go func() {
-		execute := false
 		var i bool
+		var ok bool
+
 		for {
-			select {
-			case i, more := <-input:
-				execute = true
-				if !more {
+			i, ok = <-input
+
+			if !ok {
+				close(output)
+				return
+			}
+		F:
+			for {
+				select {
+				case i, ok = <-input:
+					if !ok {
+						close(output)
+						return
+					}
+				case <-time.After(interval):
 					output <- i
-					close(output)
-					return
-				}
-			case <-time.After(interval):
-				if execute {
-					output <- i
-					execute = false
+					break F
 				}
 			}
 		}
