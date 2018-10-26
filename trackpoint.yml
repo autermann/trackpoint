@@ -1,0 +1,18 @@
+interval: 30
+values:
+  draghys: 0xFF
+  thresh: 0x08
+  upthresh: 0xFF
+  ztime: 0x26
+  sensitivity: 0x80
+  inertia: 0x06
+  speed: 0x61
+  reach: 0x0A
+  mindrag: 0x14
+  jenks: 0x87
+  drift_time: 0x05
+  press_to_select: false
+  skipback: false
+  ext_dev: false
+
+
