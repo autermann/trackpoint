@@ -1,5 +1,5 @@
 # The interval at which the daemon executes. (default "30s")
-interval: 30
+interval: 30s
 # The path to the SYSFS device. (default is to search for it)
 #sysfs: /sys/devices/platform/i8042/serio1/serio2
 # Run as a daemon (defaults to false)
