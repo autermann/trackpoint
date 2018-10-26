@@ -1,18 +1,37 @@
+# The interval at which the daemon executes. (default "30s")
 interval: 30
+# The path to the SYSFS device. (default is to search for it)
+#sysfs: /sys/devices/platform/i8042/serio1/serio2
+# Run as a daemon (defaults to false)
+#daemon: false
 values:
-  draghys: 0xFF
-  thresh: 0x08
-  upthresh: 0xFF
-  ztime: 0x26
-  sensitivity: 0x80
-  inertia: 0x06
-  speed: 0x61
-  reach: 0x0A
-  mindrag: 0x14
-  jenks: 0x87
-  drift_time: 0x05
+  # Drag Hysteresis (how hard it is to drag with Z-axis pressed). (default 255)
+  draghys: 255
+  # Minimum value for a Z-axis press. (default 8)
+  thresh: 8
+  # Used to generate a 'click' on Z-axis. (default 255)
+  upthresh: 255
+  # How sharp of a press. (default 38)
+  ztime: 38
+  # Sensitivity. (default 128)
+  sensitivity: 128
+  # Negative Inertia. (default 6)
+  inertia: 6
+  # Speed of TP Cursor. (default 97)
+  speed: 97
+  # Backup for Z-axis press. (default 10)
+  reach: 10
+  # Minimum amount of force needed to trigger dragging. (default 20)
+  mindrag: 20
+  # Minimum curvature for double click. (default 135)
+  jenks: 135
+  # How long a 'hands off' condition must last for drift correction to occur. (default 5)
+  drift_time: 5
+  # If press-to-select should be active.
   press_to_select: false
+  # Suppress movement after drag release.
   skipback: false
+  # Disable external device.
   ext_dev: false
 
 
