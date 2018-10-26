@@ -1,7 +1,7 @@
 # Maintainer: Christian Autermann <christian@autermann.org>
 _pkgname=trackpoint
 pkgname=${_pkgname}-git
-pkgver=1.0.0
+pkgver=r8.e7ad145
 pkgrel=1
 pkgdesc="Trackpoint is a tool to control ThinkPad trackpoint settings"
 arch=(x86_64)
@@ -14,6 +14,14 @@ source=("${pkgname}::git+${url}.git"
 	    "${_pkgname}.service")
 sha256sums=('SKIP'
             '7aebf522abb06219bddfffca6f7f66577087b30c387d16b0a260ddf18668a47c')
+
+pkgver() {
+  cd "$pkgname"
+  ( set -o pipefail
+    git describe --long 2>/dev/null | sed 's/\([^-]*-g\)/r\1/;s/-/./g' ||
+    printf "r%s.%s" "$(git rev-list --count HEAD)" "$(git rev-parse --short HEAD)"
+  )
+}
 
 prepare() {
 	cd ${pkgname}
